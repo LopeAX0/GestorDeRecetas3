@@ -22,7 +22,7 @@ import java.util.Scanner;
 public class GestorRecetas {
     static File documento=new File("src/main/java/org/example/Documentos/recetas.dat");
     static File documentoxml=new File("src/main/java/org/example/Documentos/recetas.xml");
-    static File documentojson=new File("src/main/java/org/example/Documentos/recetas.json");
+    static File documentojson=new File("src/main/java/org/example/Documentos/configuracion.json");
     static Scanner sc=new Scanner(System.in);
     static Cinfiguraciob configuracion=new Cinfiguraciob();
     public static void main(String[] args) throws IOException {
@@ -83,7 +83,7 @@ public class GestorRecetas {
             }
         }
     }
-/*
+
 private static void historial() {
         if (!documentojson.exists() || documentojson.length() == 0) {
             return; // Si no existe el archivo o está vacío, no hace nada
@@ -129,29 +129,6 @@ private static void historial() {
         try (FileWriter fichero = new FileWriter(documentojson)) {
             gson.toJson(listaHistorial, fichero);
         } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-* */
-    private static void historial() throws IOException {
-        Gson gson=new Gson();
-        
-        try(FileReader leer=new FileReader(documentojson)){
-            Cinfiguraciob [] historia=gson.fromJson(leer,Cinfiguraciob[].class);
-            for (Cinfiguraciob histo: historia){
-                System.out.println(histo);
-                System.out.println();
-            }
-        }
-    }
-
-    private static void metergson() {
-        Gson gson=new GsonBuilder().setPrettyPrinting().create();
-        try(FileWriter fichero=new FileWriter(documentojson)){
-            gson.toJson(configuracion,fichero);
-
-        }
-        catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -298,6 +275,7 @@ private static void historial() {
         int tiempo=0;
         char[] nombre=new char[27];
         String nombrereceta="";
+        Receta recetaEncontrada = null;
         try(RandomAccessFile leer=new RandomAccessFile(documento,"r")) {
             while(leer.getFilePointer()<documento.length()){
                 for (int i=0;i<nombre.length;i++){
@@ -309,6 +287,8 @@ private static void historial() {
                     nombrereceta=new String(nombre).trim();
                     tiempo=tiempo2;
                     encontrado=true;
+                    recetaEncontrada = new Receta(nombrereceta, ids, tiempo);
+                    break;
                 }
 
             }
@@ -319,7 +299,7 @@ private static void historial() {
             System.out.println("No existe el receta que deseas ver");
         }
         else{
-            System.out.println(id+" "+nombrereceta+" "+tiempo);
+            System.out.println(recetaEncontrada);
         }
 
     }
@@ -355,6 +335,7 @@ private static void historial() {
 
     public static void mostrar(){
         try(RandomAccessFile leer=new RandomAccessFile(documento,"r")) {
+
             while(leer.getFilePointer()<documento.length()){
                 char[] nombre=new char[27];
 
@@ -362,10 +343,11 @@ private static void historial() {
                         nombre[i] = leer.readChar();
                 }
                 String nombreaparece=new String(nombre).trim();
+                Receta receta = new Receta( nombreaparece,leer.readInt(), leer.readInt());
 
-                System.out.println("ID: "+leer.readInt());
-                System.out.println("Nombre: "+nombreaparece);
-                System.out.println("Tiempo de elavoracion: "+leer.readInt());
+                System.out.println("ID: "+receta.getId());
+                System.out.println("Nombre: "+receta.getNombre());
+                System.out.println("Tiempo de elavoracion: "+receta.getTiempo());
                 System.out.println("-----------------------------------");
             }
 

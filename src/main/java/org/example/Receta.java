@@ -1,7 +1,7 @@
 package org.example;
 
-public class Receta<E> {
-    String nombre;/*30*/
+public class Receta{
+    String nombre;/*27*/
    int id;/*4*/
     int tiempo;/*4*/
 

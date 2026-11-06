@@ -32,5 +32,11 @@ public class Cinfiguraciob {
         this.recetas = recetas;
     }
 
-
+    @Override
+    public String toString() {
+        return "Cinfiguraciob{" +
+                "usado='" + usado + '\'' +
+                ", recetas=" + recetas +
+                '}';
+    }
 }
