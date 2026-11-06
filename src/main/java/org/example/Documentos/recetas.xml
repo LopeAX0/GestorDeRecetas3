@@ -2,7 +2,20 @@
 <Catalogo>
     <Recetas>
         <Receta id="1">
-         <Nombre>Croquetas de jamon</Nombre><Tiempo>40</Tiempo>
-    </Receta>
-    <Receta id="2">
-        <Nombre>macarrones con tomate</Nombre><Tiempo>35</Tiempo></Receta><Receta id="3"><Nombre>Pizza</Nombre><Tiempo>20</Tiempo></Receta><Receta id="4"><Nombre>empedrado</Nombre><Tiempo>5</Tiempo></Receta><Receta id="5"><Nombre>Pollo frito</Nombre><Tiempo>120</Tiempo></Receta></Recetas></Catalogo>
+            <Nombre>Croquetas de jamon</Nombre>
+            <Tiempo>40</Tiempo>
+        </Receta>
+        <Receta id="2">
+            <Nombre>macarrones con tomate</Nombre>
+            <Tiempo>50</Tiempo>
+        </Receta>
+        <Receta id="3">
+            <Nombre>Pizza</Nombre>
+            <Tiempo>20</Tiempo>
+        </Receta>
+        <Receta id="4">
+            <Nombre>Lope</Nombre>
+            <Tiempo>14</Tiempo>
+        </Receta>
+    </Recetas>
+</Catalogo>

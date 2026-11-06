@@ -33,8 +33,6 @@ public class GestorRecetas {
            }
        }
         boolean salida=false;
-
-
         int opcion=0;
         comprobar();
         historial();
@@ -103,7 +101,6 @@ private static void historial() {
             System.out.println("Aviso: El formato del historial anterior era diferente o estaba vacío.");
         }
     }
-
     private static void metergson() {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         ArrayList<Cinfiguraciob> listaHistorial = new ArrayList<>();
@@ -206,10 +203,8 @@ private static void historial() {
     }
 
     private static void Añadir() {
-
         char[] nombre=new char[27];
         ArrayList<Integer> ids=new ArrayList<>();
-
         try(RandomAccessFile leer=new RandomAccessFile(documento,"rw")) {
             while(leer.getFilePointer()<documento.length()){
                 for (int i=0;i<nombre.length;i++){
@@ -237,7 +232,6 @@ private static void historial() {
     }
 
     private static void modificarTiempo(){
-
         try(RandomAccessFile leer=new RandomAccessFile(documento,"rw")) {
             System.out.println("Ingrese el id de la receta que deseas modificar");
             int id=sc.nextInt();
@@ -245,7 +239,6 @@ private static void historial() {
             int ids=0;
             int tiempo=0;
             char[] nombre=new char[27];
-
             while(leer.getFilePointer()<documento.length()){
                 for (int i=0;i<nombre.length;i++){
                     nombre[i] = leer.readChar();
@@ -253,6 +246,7 @@ private static void historial() {
                 ids=leer.readInt();
                 int tiempo2=leer.readInt();
                 if(id==ids){
+                    encontrado=true;
                     leer.seek(leer.getFilePointer()-4);
                     System.out.println("Se a encontrado la receta, actualmente tiene de tiempo "+tiempo2);
                     System.out.println("Ingrese el tiempo que deseas modifcar");
@@ -261,6 +255,10 @@ private static void historial() {
                     System.out.println("Se a cambiado correctamente tiempo");
                     break;
                 }
+            }
+            if(!encontrado){
+                System.out.println("No existe el id de la receta." +
+                        "\nAsique se le va rediriguir al menu");
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -290,7 +288,6 @@ private static void historial() {
                     recetaEncontrada = new Receta(nombrereceta, ids, tiempo);
                     break;
                 }
-
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -301,18 +298,16 @@ private static void historial() {
         else{
             System.out.println(recetaEncontrada);
         }
-
     }
 
     private static void comprobar(){
-    if (documento.length()==0){
+    if (documento.length()==0 && documento.exists()){
        try( DataOutputStream escribeFichero = new DataOutputStream( new FileOutputStream(documento,true))){
            String[] Nombres = {"Croquetas de jamon", "macarrones con tomate", "Pizza"};
            int[] ids={1,2,3};
            int [] tiempo={40,20,20};
            try (RandomAccessFile fichero = new RandomAccessFile(documento, "rw")) {
                for (int i = 0; i < Nombres.length; i++) {
-
                    //Escribe nombre de tamaño fijo 27 caracteres
                    StringBuffer nombre = new
                            StringBuffer(Nombres[i]);
@@ -322,11 +317,9 @@ private static void historial() {
                    escribeFichero.writeInt(ids[i]);
                    //Escribe tiempo
                    escribeFichero.writeInt(tiempo[i]);
-
                }
                System.out.println("Registros almacenados correctamente.");
            }
-
        } catch (IOException e) {
            throw new RuntimeException(e);
        }

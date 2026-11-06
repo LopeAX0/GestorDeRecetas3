@@ -34,7 +34,7 @@ public class Cinfiguraciob {
 
     @Override
     public String toString() {
-        return "Cinfiguraciob{" +
+        return "Configuración{" +
                 "usado='" + usado + '\'' +
                 ", recetas=" + recetas +
                 '}';
