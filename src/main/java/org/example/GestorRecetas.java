@@ -1,5 +1,7 @@
 package org.example;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -20,8 +22,10 @@ import java.util.Scanner;
 public class GestorRecetas {
     static File documento=new File("src/main/java/org/example/Documentos/recetas.dat");
     static File documentoxml=new File("src/main/java/org/example/Documentos/recetas.xml");
+    static File documentojson=new File("src/main/java/org/example/Documentos/recetas.json");
     static Scanner sc=new Scanner(System.in);
-    public static void main(String[] args) {
+    static Cinfiguraciob configuracion=new Cinfiguraciob();
+    public static void main(String[] args) throws IOException {
        if(!documento.exists()){
            try{documento.createNewFile();}
            catch(Exception e){
@@ -30,9 +34,12 @@ public class GestorRecetas {
        }
         boolean salida=false;
 
+
         int opcion=0;
         comprobar();
+        historial();
         while (salida==false){
+            contar();
             System.out.println("1.Mostrar recetas \n" +
                     "2.Buscar receta\n" +
                     "3.Modificar tiempo de receta\n" +
@@ -42,32 +49,129 @@ public class GestorRecetas {
             opcion=sc.nextInt();
             switch (opcion){
                 case 1:{
+                    configuracion.setUsado("Mostrar recetas");
                     mostrar();
                     break;
                 }
                 case 2:{
+                    configuracion.setUsado("Buscar receta");
                     Buscar();break;
                 }
                 case 3:{
+                    configuracion.setUsado("Modificar tiempo de receta");
                     modificarTiempo();
                     break;
                 }
                 case 4:{
+                    configuracion.setUsado("Añadir nueva receta");
                     Añadir();
                     break;
                 }
                 case 5:{
+                    configuracion.setUsado("Exportar a xml");
                     Exportar();
                     break;
                 }
                 case 6:{
                     salida=true;
+                    metergson();
                     break;
                 }
                 default:{
                     System.out.println("Esa opcion es invalida");
                 }
             }
+        }
+    }
+/*
+private static void historial() {
+        if (!documentojson.exists() || documentojson.length() == 0) {
+            return; // Si no existe el archivo o está vacío, no hace nada
+        }
+
+        Gson gson = new Gson();
+        try (FileReader leer = new FileReader(documentojson)) {
+            Cinfiguraciob[] historia = gson.fromJson(leer, Cinfiguraciob[].class);
+            if (historia != null) {
+                for (Cinfiguraciob histo : historia) {
+                    System.out.println(histo);
+                    System.out.println();
+                }
+            }
+        } catch (Exception e) {
+            // Manejamos por si el archivo tenía un formato antiguo de objeto único
+            System.out.println("Aviso: El formato del historial anterior era diferente o estaba vacío.");
+        }
+    }
+
+    private static void metergson() {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        ArrayList<Cinfiguraciob> listaHistorial = new ArrayList<>();
+
+        // 1. Si el archivo ya existe y tiene contenido, leemos el historial previo
+        if (documentojson.exists() && documentojson.length() > 0) {
+            try (FileReader leer = new FileReader(documentojson)) {
+                Cinfiguraciob[] existentes = gson.fromJson(leer, Cinfiguraciob[].class);
+                if (existentes != null) {
+                    for (Cinfiguraciob c : existentes) {
+                        listaHistorial.add(c);
+                    }
+                }
+            } catch (Exception e) {
+                // Si el archivo estaba corrupto o con formato de objeto único, lo ignoramos para empezar limpio
+            }
+        }
+
+        // 2. Añadimos la configuración actual al historial
+        listaHistorial.add(configuracion);
+
+        // 3. Guardamos toda la lista actualizada en el archivo JSON
+        try (FileWriter fichero = new FileWriter(documentojson)) {
+            gson.toJson(listaHistorial, fichero);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+* */
+    private static void historial() throws IOException {
+        Gson gson=new Gson();
+        
+        try(FileReader leer=new FileReader(documentojson)){
+            Cinfiguraciob [] historia=gson.fromJson(leer,Cinfiguraciob[].class);
+            for (Cinfiguraciob histo: historia){
+                System.out.println(histo);
+                System.out.println();
+            }
+        }
+    }
+
+    private static void metergson() {
+        Gson gson=new GsonBuilder().setPrettyPrinting().create();
+        try(FileWriter fichero=new FileWriter(documentojson)){
+            gson.toJson(configuracion,fichero);
+
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static void contar() {
+        char[] nombre=new char[27];
+
+        int nrecetas=0;
+        try(RandomAccessFile leer=new RandomAccessFile(documento,"rw")) {
+            while(leer.getFilePointer()<documento.length()){
+                for (int i=0;i<nombre.length;i++){
+                    nombre[i] = leer.readChar();
+                }
+                int id=(leer.readInt());
+                int tiempo2=leer.readInt();
+                nrecetas++;
+            }
+            configuracion.setRecetas(nrecetas);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
