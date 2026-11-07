@@ -1,15 +1,9 @@
 package org.example;
 
-import com.google.gson.Gson;
-
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-
 public class Cinfiguraciob {
     String usado;
     int recetas;
+
 
     // Constructor con parámetros
     public Cinfiguraciob() {

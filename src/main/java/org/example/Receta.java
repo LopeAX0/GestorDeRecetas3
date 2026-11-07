@@ -4,6 +4,10 @@ public class Receta{
     String nombre;/*27*/
    int id;/*4*/
     int tiempo;/*4*/
+/*
+* char=2
+* int=4
+* doble=8*/
 
     public Receta(String nombre, int id, int tiempo) {
         this.nombre = nombre;

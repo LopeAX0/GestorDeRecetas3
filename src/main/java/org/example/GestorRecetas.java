@@ -111,6 +111,9 @@ private static void historial() {
                 Cinfiguraciob[] existentes = gson.fromJson(leer, Cinfiguraciob[].class);
                 if (existentes != null) {
                     for (Cinfiguraciob c : existentes) {
+                      if (c.getUsado().equals("Tonto")) {
+                          c.setUsado("Mostrar recetas");
+                      }
                         listaHistorial.add(c);
                     }
                 }
@@ -134,7 +137,7 @@ private static void historial() {
         char[] nombre=new char[27];
 
         int nrecetas=0;
-        try(RandomAccessFile leer=new RandomAccessFile(documento,"rw")) {
+        try(RandomAccessFile leer=new RandomAccessFile(documento,"r")) {
             while(leer.getFilePointer()<documento.length()){
                 for (int i=0;i<nombre.length;i++){
                     nombre[i] = leer.readChar();
@@ -160,14 +163,14 @@ private static void historial() {
             }
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            Document xml = builder.newDocument();// <-- AQUÍ ESTABA EL CAMBIO PRINCIPAL
+            Document xml = builder.newDocument();
             // si ahi cosas dentro Document xml = builder.parse(new File(documentoxml.toURI()));
+            //NodeList raiz= zoo.getElementsByTagName("Felino");
             // 2. Creamos los nodos del XML
             Element raiz = xml.createElement("Catalogo");
             xml.appendChild(raiz);
             Element recetas = xml.createElement("Recetas");
             raiz.appendChild(recetas);
-
             while(leer.getFilePointer()<documento.length()){
                 char[] nombres = new char[27];
                 for (int i=0;i<nombres.length;i++){
@@ -185,7 +188,6 @@ private static void historial() {
                 Element tiempo=xml.createElement("Tiempo");
                 tiempo.setTextContent(String.valueOf(tiempo2));
                 receta.appendChild(tiempo);
-
             }
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
             transformer.transform(new DOMSource(xml),new
@@ -224,7 +226,8 @@ private static void historial() {
            leer.writeChars(newnombre.toString());
            leer.writeInt(newid);
            leer.writeInt(newtiempo);
-            System.out.println("Receta añadida con exito.");
+           System.out.println("Receta añadida con exito.");
+           leer.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -244,8 +247,11 @@ private static void historial() {
                     nombre[i] = leer.readChar();
                 }
                 ids=leer.readInt();
+
                 int tiempo2=leer.readInt();
+
                 if(id==ids){
+
                     encontrado=true;
                     leer.seek(leer.getFilePointer()-4);
                     System.out.println("Se a encontrado la receta, actualmente tiene de tiempo "+tiempo2);
@@ -300,8 +306,12 @@ private static void historial() {
         }
     }
 
-    private static void comprobar(){
-    if (documento.length()==0 && documento.exists()){
+    private static void comprobar() throws IOException {
+        if (!documento.exists()){
+            documento.createNewFile();
+        }
+        if (documento.length()==0){
+
        try( DataOutputStream escribeFichero = new DataOutputStream( new FileOutputStream(documento,true))){
            String[] Nombres = {"Croquetas de jamon", "macarrones con tomate", "Pizza"};
            int[] ids={1,2,3};
@@ -313,7 +323,7 @@ private static void historial() {
                            StringBuffer(Nombres[i]);
                    nombre.setLength(27);
                    escribeFichero.writeChars(nombre.toString());
-                   //Escribe edad
+                   //Escribe id
                    escribeFichero.writeInt(ids[i]);
                    //Escribe tiempo
                    escribeFichero.writeInt(tiempo[i]);
@@ -328,7 +338,6 @@ private static void historial() {
 
     public static void mostrar(){
         try(RandomAccessFile leer=new RandomAccessFile(documento,"r")) {
-
             while(leer.getFilePointer()<documento.length()){
                 char[] nombre=new char[27];
 
